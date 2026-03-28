@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Activity, Apple, Scale, Droplet, Check, RefreshCw } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
@@ -36,6 +36,7 @@ export function Calculator() {
 
   // Result
   const [result, setResult] = useState<NutriscoreResult | null>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
 
   // Computed display for salt hint
   const saltHint = isSodiumMode && saltOrSodium
@@ -102,6 +103,9 @@ export function Calculator() {
     });
 
     setResult(res);
+    setTimeout(() => {
+      resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
   };
 
   const FVL_OPTIONS = [
@@ -303,6 +307,7 @@ export function Calculator() {
       <AnimatePresence>
         {result && (
           <motion.div 
+            ref={resultRef}
             initial={{ opacity: 0, y: 20, height: 0 }}
             animate={{ opacity: 1, y: 0, height: "auto" }}
             exit={{ opacity: 0, y: -20, height: 0 }}
