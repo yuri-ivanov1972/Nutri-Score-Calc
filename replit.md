@@ -48,6 +48,19 @@ Every package extends `tsconfig.base.json` which sets `composite: true`. The roo
 - `pnpm run build` — runs `typecheck` first, then recursively runs `build` in all packages that define it
 - `pnpm run typecheck` — runs `tsc --build --emitDeclarationOnly` using project references
 
+## Artifacts
+
+### `artifacts/nutri-score` (`@workspace/nutri-score`)
+
+Mobile-optimized Nutri-Score 2.0 (2024) calculator. Pure frontend React + Vite app, no backend.
+
+- Entry: `src/main.tsx`
+- Calculator logic: `src/lib/nutriscore.ts` — full TypeScript implementation of the algorithm
+- i18n: `src/lib/i18n.tsx` — English, German, French, Latvian translations
+- Main component: `src/components/calculator.tsx`
+- Grade badge: `src/components/grade-badge.tsx`
+- Features: 5 product categories, kcal/kJ auto-convert, salt/sodium toggle, FVL selector, sweetener checkbox (beverages), protein blocking, grade display with official colors, score breakdown
+
 ## Packages
 
 ### `artifacts/api-server` (`@workspace/api-server`)

@@ -1,0 +1,10 @@
+packages:
+  "framer-motion": "Smooth sliding and fade animations for results panel"
+  "clsx": "Utility for constructing className strings conditionally"
+  "tailwind-merge": "Utility for merging tailwind classes without conflicts"
+
+images: []
+
+notes:
+  - "No backend needed, all calculations happen client-side"
+  - "App relies on provided artifacts/nutri-score/src/lib/nutriscore.ts logic"
