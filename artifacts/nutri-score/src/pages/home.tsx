@@ -1,6 +1,7 @@
 import React from "react";
 import { useI18n, Language } from "@/lib/i18n";
 import { Calculator } from "@/components/calculator";
+import logo from "@assets/RVB_neutre_1774807383388.png";
 
 export default function Home() {
   const { language, setLanguage } = useI18n();
@@ -10,14 +11,7 @@ export default function Home() {
       {/* Sticky Header */}
       <header className="sticky top-0 z-50 bg-card/90 backdrop-blur-md border-b border-border shadow-sm">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm">
-              <span className="text-white font-black text-xs leading-none">NS</span>
-            </div>
-            <h1 className="font-display font-bold text-lg sm:text-xl text-foreground tracking-tight">
-              Nutri-Score
-            </h1>
-          </div>
+          <img src={logo} alt="Nutri-Score" className="h-9 w-auto" />
 
           <select
             value={language}
