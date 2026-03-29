@@ -4,14 +4,19 @@ import { Calculator } from "@/components/calculator";
 import logo from "@assets/RVB_neutre_1774807383388.png";
 
 export default function Home() {
-  const { language, setLanguage } = useI18n();
+  const { language, setLanguage, t } = useI18n();
 
   return (
     <div className="min-h-screen bg-background font-sans flex flex-col selection:bg-primary/20 selection:text-primary">
       {/* Sticky Header */}
       <header className="sticky top-0 z-50 bg-card/90 backdrop-blur-md border-b border-border shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-          <img src={logo} alt="Nutri-Score" className="h-9 w-auto" />
+        <div className="max-w-4xl mx-auto px-4 h-24 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img src={logo} alt="Nutri-Score" className="h-[72px] w-auto" />
+            <span className="font-display font-bold text-xl text-foreground tracking-tight leading-tight">
+              {t("calculator")}
+            </span>
+          </div>
 
           <select
             value={language}

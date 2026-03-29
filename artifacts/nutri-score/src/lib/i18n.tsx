@@ -38,6 +38,7 @@ const translations: Record<Language, TranslationDictionary> = {
     fill_required: "Please fill all required fields",
     per_100: "per 100g / 100ml",
     pts: "pts",
+    calculator: "Calculator",
   },
   de: {
     app_title: "Nutri-Score Rechner",
@@ -70,6 +71,7 @@ const translations: Record<Language, TranslationDictionary> = {
     fill_required: "Bitte alle Pflichtfelder ausfüllen",
     per_100: "pro 100g / 100ml",
     pts: "Pkt",
+    calculator: "Rechner",
   },
   fr: {
     app_title: "Calculateur Nutri-Score",
@@ -102,6 +104,7 @@ const translations: Record<Language, TranslationDictionary> = {
     fill_required: "Veuillez remplir tous les champs requis",
     per_100: "pour 100g / 100ml",
     pts: "pts",
+    calculator: "Calculateur",
   },
   lv: {
     app_title: "Nutri-Score Kalkulators",
@@ -134,6 +137,7 @@ const translations: Record<Language, TranslationDictionary> = {
     fill_required: "Lūdzu, aizpildiet visus obligātos laukus",
     per_100: "uz 100g / 100ml",
     pts: "p",
+    calculator: "Kalkulators",
   }
 };
 
