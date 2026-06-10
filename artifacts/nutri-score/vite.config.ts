@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
@@ -26,11 +26,37 @@ if (!basePath) {
   );
 }
 
+/**
+ * Converts Vite's injected blocking <link rel="stylesheet"> tags into
+ * non-blocking preloads so the inline static shell paints at TTFB
+ * instead of waiting for the CSS bundle download.
+ *
+ * Only active in production builds — dev HMR is unaffected.
+ */
+function deferAppCss(): Plugin {
+  return {
+    name: "defer-app-css",
+    apply: "build",
+    transformIndexHtml: {
+      order: "post",
+      handler(html: string) {
+        return html.replace(
+          /<link rel="stylesheet" crossorigin href="([^"]+)">/g,
+          (_, href) =>
+            `<link rel="preload" as="style" href="${href}" onload="this.onload=null;this.rel='stylesheet'">` +
+            `<noscript><link rel="stylesheet" href="${href}"></noscript>`,
+        );
+      },
+    },
+  };
+}
+
 export default defineConfig({
   base: basePath,
   plugins: [
     react(),
     tailwindcss(),
+    deferAppCss(),
     runtimeErrorOverlay(),
     ...(process.env.NODE_ENV !== "production" &&
     process.env.REPL_ID !== undefined
