@@ -7,9 +7,8 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Non-blocking font load — does not delay FCP -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"></noscript>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap"></noscript>
 
     <!-- Primary meta -->
     <meta name="description" content="Calculate Nutri-Score 2.0 (2024) free online. Supports all product categories: general foods, beverages, cheese, red meat, and fats. Enter nutrition values and get your grade instantly." />
@@ -30,93 +29,293 @@
     <meta name="twitter:description" content="Calculate Nutri-Score 2.0 (2024) free online. Supports all product categories: general foods, beverages, cheese, red meat, and fats." />
 
     <style>
-      /* Scoped strictly to #static-shell — no bleed into React/Tailwind */
-      #static-shell{display:flex;flex-direction:column;min-height:100vh;background:#f5f5f5;font-family:Inter,system-ui,sans-serif;color:#333}
-      #static-shell *{box-sizing:border-box}
-      /* Header */
-      #ss-header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);border-bottom:1px solid #e5e5e5;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-      #ss-header-inner{max-width:56rem;margin:0 auto;padding:0 1rem;height:96px;display:flex;align-items:center;justify-content:space-between}
-      #ss-logo-wrap{display:flex;align-items:center;gap:12px}
-      #ss-logo{height:72px;width:auto}
-      #ss-title{font-size:1.25rem;font-weight:700;letter-spacing:-.02em;color:#1a1a1a}
-      #ss-lang{background:#f0f0ef;color:#1a1a1a;font-size:.875rem;font-weight:600;padding:6px 12px;border-radius:8px;border:1px solid #e5e5e5}
-      /* Main */
-      #ss-main{flex:1;padding:2rem 1rem 3rem}
-      #ss-card{max-width:56rem;margin:0 auto;background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 1px 4px rgba(0,0,0,.08);border:1px solid #ebebeb}
-      .ss-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
-      .ss-label{font-size:.9rem;font-weight:600;color:#1a1a1a}
-      .ss-hint{font-size:.8rem;color:#888}
-      .ss-select{width:100%;background:#f5f5f4;border:1px solid #e5e5e5;border-radius:10px;padding:12px 14px;font-size:.95rem;color:#1a1a1a;margin-bottom:1.25rem}
-      .ss-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.25rem}
-      .ss-field-full{margin-bottom:1.25rem}
-      .ss-field-label{font-size:.85rem;font-weight:500;color:#444;margin-bottom:6px;display:block}
-      .ss-input{width:100%;background:#f5f5f4;border:1px solid #e5e5e5;border-radius:10px;padding:11px 14px;font-size:.95rem;color:#888}
-      .ss-divider{border:none;border-top:1px solid #ebebeb;margin:1.25rem 0}
-      .ss-btn{width:100%;background:hsl(26,100%,50%);color:#fff;border:none;border-radius:12px;padding:14px;font-size:1rem;font-weight:700;cursor:default;margin-top:.5rem}
+      /*
+       * Static shell — pixel-perfect match of the React app.
+       * CSS token values taken directly from index.css :root block:
+       *   --background : hsl(0 0% 96%)   = #f5f5f5
+       *   --foreground : hsl(0 0% 20%)   = #333333
+       *   --card       : hsl(0 0% 100%)  = #ffffff
+       *   --border     : hsl(0 0% 87%)   = #dedede
+       *   --muted-fg   : hsl(0 0% 47%)   = #787878
+       *   --primary    : hsl(26 100% 50%)= #ff6e00
+       *   --secondary  : hsl(26 100% 94%)= #fff0e6
+       *   shadow-xl    : 0px 2px 0px 0px rgba(0,0,0,.04), 0px 20px 25px -5px rgba(0,0,0,.12)
+       * All rules are scoped to #static-shell to prevent any bleed into React/Tailwind.
+       */
+
+      /* Box-sizing only — no margin/padding reset (would override element rules) */
+      #static-shell * { box-sizing: border-box; }
+
+      /* Page chrome */
+      #static-shell {
+        min-height: 100vh;
+        background: #f5f5f5;
+        font-family: Inter, system-ui, sans-serif;
+        color: #333333;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ── Header ── matches: sticky h-24 bg-card/90 backdrop-blur-md border-b shadow-sm */
+      #ss-header {
+        position: sticky; top: 0; z-index: 50;
+        background: rgba(255,255,255,0.90);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid #dedede;
+        box-shadow: 0 1px 2px rgba(0,0,0,.06);
+      }
+      #ss-header-inner {
+        max-width: 56rem; margin: 0 auto; padding: 0 1rem;
+        height: 6rem;
+        display: flex; align-items: center; justify-content: space-between;
+      }
+      #ss-logo-row { display: flex; align-items: center; gap: 0.75rem; }
+      #ss-logo { height: 72px; width: auto; display: block; }
+      #ss-title {
+        font-family: Montserrat, system-ui, sans-serif;
+        font-weight: 700; font-size: 1.25rem;
+        color: #333333; line-height: 1.2; margin: 0;
+      }
+      /* Language selector — matches: bg-secondary text-secondary-foreground text-sm font-semibold py-1.5 px-3 rounded-lg border */
+      #ss-lang {
+        background: #fff0e6; color: #8c3a00;
+        font-size: 0.875rem; font-weight: 600;
+        padding: 0.375rem 0.75rem;
+        border-radius: 0.5rem;
+        border: 1px solid #dedede;
+        appearance: none;
+        cursor: pointer;
+        outline: none;
+      }
+
+      /* ── Main ── matches: flex-1 px-4 py-8 */
+      #ss-main { flex: 1; padding: 2rem 1rem; }
+
+      /* ── Calculator wrapper ── matches: w-full max-w-lg mx-auto pb-24 */
+      #ss-calc { max-width: 32rem; margin: 0 auto; padding-bottom: 6rem; }
+
+      /* ── Card ── matches: bg-card rounded-2xl shadow-xl border border-border */
+      #ss-card {
+        background: #ffffff;
+        border-radius: 1rem;
+        border: 1px solid #dedede;
+        box-shadow: 0px 2px 0px 0px rgba(0,0,0,.04), 0px 20px 25px -5px rgba(0,0,0,.12);
+        overflow: hidden;
+      }
+
+      /* ── Card body ── matches: p-6 space-y-6 */
+      #ss-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+
+      /* ── Shared label ── matches: text-sm font-semibold text-foreground */
+      .ss-label {
+        font-size: 0.875rem; font-weight: 600; color: #333333;
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 0.5rem;
+      }
+      .ss-label-muted { font-size: 0.75rem; font-weight: 400; color: #787878; }
+
+      /* ── Inputs & select ── matches: px-4 py-3 rounded-xl bg-background border-2 border-border */
+      .ss-input, .ss-select {
+        width: 100%;
+        background: #f5f5f5;
+        border: 2px solid #dedede;
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+        font-size: 0.9375rem;
+        color: #787878;
+        outline: none;
+        display: block;
+        appearance: none;
+      }
+
+      /* ── Energy row ── matches: pt-2 space-y-2 */
+      #ss-energy-section { padding-top: 0.5rem; }
+      #ss-energy-label {
+        font-size: 0.875rem; font-weight: 600; color: #333333;
+        display: flex; align-items: center; gap: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+      #ss-energy-label svg { color: #ff6e00; flex-shrink: 0; }
+      #ss-energy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+      .ss-energy-wrap { position: relative; }
+      .ss-energy-wrap .ss-input { padding-right: 3rem; }
+      .ss-energy-suffix {
+        position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
+        font-size: 0.875rem; color: #787878; pointer-events: none;
+      }
+
+      /* ── Nutrients grid ── matches: grid-cols-2 gap-4 pt-2 */
+      #ss-nutrients { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding-top: 0.5rem; }
+      .ss-field { display: flex; flex-direction: column; gap: 0.5rem; }
+      .ss-field-label { font-size: 0.875rem; font-weight: 600; color: #333333; }
+      .ss-salt-header { display: flex; align-items: center; justify-content: space-between; }
+      .ss-use-sodium { font-size: 0.75rem; font-weight: 500; color: #ff6e00; background: none; border: none; padding: 0; cursor: default; }
+
+      /* ── FVL section ── matches: space-y-3 pt-4 border-t border-border */
+      #ss-fvl { padding-top: 1rem; border-top: 1px solid #dedede; display: flex; flex-direction: column; gap: 0.75rem; }
+      #ss-fvl-label {
+        font-size: 0.875rem; font-weight: 600; color: #333333;
+        display: flex; align-items: center; gap: 0.5rem;
+      }
+      #ss-fvl-label svg { color: #22c55e; flex-shrink: 0; }
+      #ss-fvl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+      .ss-fvl-btn {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.875rem; font-weight: 500;
+        border-radius: 0.5rem;
+        border: 2px solid;
+        text-align: center;
+        cursor: default;
+      }
+      .ss-fvl-btn.selected {
+        background: rgba(255,110,0,0.10);
+        border-color: #ff6e00;
+        color: #ff6e00;
+      }
+      .ss-fvl-btn.default {
+        background: #f5f5f5;
+        border-color: #dedede;
+        color: #787878;
+      }
+
+      /* ── Actions row ── matches: pt-6 flex gap-4 */
+      #ss-actions { padding-top: 1.5rem; display: flex; gap: 1rem; }
+      /* Reset btn — matches: px-4 py-3 rounded-xl bg-secondary text-muted-foreground */
+      #ss-reset {
+        padding: 0.75rem 1rem;
+        background: #fff0e6;
+        color: #787878;
+        border-radius: 0.75rem;
+        border: none;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+        cursor: default;
+      }
+      #ss-reset svg { width: 1rem; height: 1rem; }
+      /* Calc btn — matches: flex-1 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-bold shadow-lg */
+      #ss-calc-btn {
+        flex: 1;
+        padding: 0.75rem 1.5rem;
+        background: #ff6e00;
+        color: #ffffff;
+        font-weight: 700; font-size: 1rem;
+        border-radius: 0.75rem;
+        border: none;
+        box-shadow: 0 4px 6px -1px rgba(255,110,0,.25), 0 2px 4px -2px rgba(255,110,0,.25);
+        cursor: default;
+      }
     </style>
   </head>
   <body>
     <div id="root">
-      <!-- Static shell — visible immediately, replaced by React on load -->
       <div id="static-shell">
+
+        <!-- Header -->
         <header id="ss-header">
           <div id="ss-header-inner">
-            <div id="ss-logo-wrap">
-              <img id="ss-logo" src="/logo.png" alt="Nutri-Score" />
+            <div id="ss-logo-row">
+              <img id="ss-logo" src="/logo.png" alt="Nutri-Score" width="120" height="72" />
               <h1 id="ss-title">Calculator</h1>
             </div>
-            <div id="ss-lang">EN</div>
+            <select id="ss-lang" disabled>
+              <option>EN</option>
+            </select>
           </div>
         </header>
 
+        <!-- Main -->
         <main id="ss-main">
-          <div id="ss-card">
-            <div class="ss-row">
-              <span class="ss-label">Product Category</span>
-              <span class="ss-hint">per 100g / 100ml</span>
-            </div>
-            <div class="ss-select">General (snacks, meals, bread)</div>
+          <div id="ss-calc">
+            <div id="ss-card">
+              <div id="ss-body">
 
-            <div class="ss-field-full">
-              <span class="ss-field-label">⚡ Energy</span>
-              <div class="ss-field-grid">
-                <div class="ss-input">0 kcal</div>
-                <div class="ss-input">0 kJ</div>
-              </div>
-            </div>
+                <!-- Category -->
+                <div>
+                  <div class="ss-label">
+                    Product Category
+                    <span class="ss-label-muted">per 100g / 100ml</span>
+                  </div>
+                  <select class="ss-select" disabled>
+                    <option>General (snacks, meals, bread)</option>
+                  </select>
+                </div>
 
-            <div class="ss-field-grid">
-              <div>
-                <span class="ss-field-label">Sugars (g)</span>
-                <div class="ss-input">0.0</div>
-              </div>
-              <div>
-                <span class="ss-field-label">Saturated Fat (g)</span>
-                <div class="ss-input">0.0</div>
-              </div>
-            </div>
+                <!-- Energy -->
+                <div id="ss-energy-section">
+                  <div id="ss-energy-label">
+                    <!-- Activity icon (lucide) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></svg>
+                    Energy
+                  </div>
+                  <div id="ss-energy-grid">
+                    <div class="ss-energy-wrap">
+                      <div class="ss-input" style="color:#bbb">0</div>
+                      <span class="ss-energy-suffix">kcal</span>
+                    </div>
+                    <div class="ss-energy-wrap">
+                      <div class="ss-input" style="color:#bbb">0</div>
+                      <span class="ss-energy-suffix">kJ</span>
+                    </div>
+                  </div>
+                </div>
 
-            <div class="ss-field-grid" style="margin-top:.75rem">
-              <div>
-                <span class="ss-field-label">Salt (g)</span>
-                <div class="ss-input">0.0</div>
-              </div>
-              <div>
-                <span class="ss-field-label">Protein (g)</span>
-                <div class="ss-input">0.0</div>
-              </div>
-            </div>
+                <!-- Nutrients grid -->
+                <div id="ss-nutrients">
+                  <div class="ss-field">
+                    <span class="ss-field-label">Sugars (g)</span>
+                    <div class="ss-input" style="color:#bbb">0.0</div>
+                  </div>
+                  <div class="ss-field">
+                    <span class="ss-field-label">Saturated Fat (g)</span>
+                    <div class="ss-input" style="color:#bbb">0.0</div>
+                  </div>
+                  <div class="ss-field">
+                    <div class="ss-salt-header">
+                      <span class="ss-field-label">Salt (g)</span>
+                      <span class="ss-use-sodium">Use Sodium</span>
+                    </div>
+                    <div class="ss-input" style="color:#bbb">0.0</div>
+                  </div>
+                  <div class="ss-field">
+                    <span class="ss-field-label">Protein (g)</span>
+                    <div class="ss-input" style="color:#bbb">0.0</div>
+                  </div>
+                  <div class="ss-field">
+                    <span class="ss-field-label">Fiber (g)</span>
+                    <div class="ss-input" style="color:#bbb">0.0</div>
+                  </div>
+                </div>
 
-            <div class="ss-field-full" style="margin-top:.75rem">
-              <span class="ss-field-label">Dietary Fiber (g)</span>
-              <div class="ss-input">0.0</div>
-            </div>
+                <!-- FVL -->
+                <div id="ss-fvl">
+                  <div id="ss-fvl-label">
+                    <!-- Apple icon (lucide) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06z"/><path d="M10 2c1 .5 2 2 2 5"/></svg>
+                    Fruits, Vegetables, Legumes
+                  </div>
+                  <div id="ss-fvl-grid">
+                    <div class="ss-fvl-btn selected">None (0%)</div>
+                    <div class="ss-fvl-btn default">&gt; 40%</div>
+                    <div class="ss-fvl-btn default">&gt; 60%</div>
+                    <div class="ss-fvl-btn default">&gt; 80%</div>
+                  </div>
+                </div>
 
-            <hr class="ss-divider" />
-            <div class="ss-btn">Calculate Score</div>
-          </div>
+                <!-- Actions -->
+                <div id="ss-actions">
+                  <button id="ss-reset" disabled>
+                    <!-- RefreshCw icon (lucide) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+                  </button>
+                  <button id="ss-calc-btn" disabled>Calculate Score</button>
+                </div>
+
+              </div><!-- /ss-body -->
+            </div><!-- /ss-card -->
+          </div><!-- /ss-calc -->
         </main>
-      </div>
+
+      </div><!-- /static-shell -->
     </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
