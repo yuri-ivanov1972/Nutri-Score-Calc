@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-export type Language = "en" | "de" | "fr" | "lv";
+export type Language = "en" | "de" | "fr" | "lv" | "et";
 
 type TranslationDictionary = {
   [key: string]: string;
@@ -105,6 +105,39 @@ const translations: Record<Language, TranslationDictionary> = {
     per_100: "pour 100g / 100ml",
     pts: "pts",
     calculator: "Calculateur",
+  },
+  et: {
+    app_title: "Nutri-Score Kalkulaator",
+    category_label: "Tootekategooria",
+    cat_general: "Üldine (suupisted, toidud, leib)",
+    cat_beverage: "Joogid",
+    cat_cheese: "Juust",
+    cat_red_meat: "Punane liha",
+    cat_fats_oils_nuts: "Rasvad, õlid ja pähklid",
+    energy: "Energia",
+    salt: "Sool",
+    sodium: "Naatrium",
+    sugars: "Suhkrud",
+    saturated_fat: "Küllastunud rasvhapped",
+    protein: "Valk",
+    fiber: "Toidukiud",
+    total_fat: "Kogu rasv",
+    fvl: "Puuviljad, köögiviljad, kaunviljad",
+    fvl_0: "Puudub (0%)",
+    fvl_40: "> 40%",
+    fvl_60: "> 60%",
+    fvl_80: "> 80%",
+    contains_sweeteners: "Sisaldab kunstlikke magusaineid",
+    calculate: "Arvuta skoor",
+    clear: "Tühjenda",
+    score: "Skoor",
+    negative_points: "Negatiivsed punktid",
+    positive_points: "Positiivsed punktid",
+    protein_blocked: "Valk blokeeritud (N≥11 ja vähe PVK)",
+    fill_required: "Palun täitke kõik kohustuslikud väljad",
+    per_100: "100g / 100ml kohta",
+    pts: "p",
+    calculator: "Kalkulaator",
   },
   lv: {
     app_title: "Nutri-Score Kalkulators",
