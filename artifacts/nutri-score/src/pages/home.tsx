@@ -41,12 +41,12 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-4 py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-muted-foreground">
           <span>Created by the Open Food Facts team</span>
           <a
-            href="https://world.openfoodfacts.org"
+            href="https://abcde.lv"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary hover:underline font-medium"
           >
-            world.openfoodfacts.org
+            abcde.lv
           </a>
         </div>
         <div className="max-w-4xl mx-auto px-4 pb-5 text-xs text-muted-foreground leading-relaxed">
