@@ -122,11 +122,12 @@ export function Calculator() {
           
           {/* Category */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-foreground flex justify-between">
+            <label htmlFor="cat-select" className="text-sm font-semibold text-foreground flex justify-between">
               {t("category_label")}
               <span className="text-muted-foreground text-xs">{t("per_100")}</span>
             </label>
             <select 
+              id="cat-select"
               value={category}
               onChange={handleCategoryChange}
               className="w-full px-4 py-3 rounded-xl bg-background border-2 border-border text-foreground hover:border-primary/50 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none appearance-none font-medium"
@@ -147,6 +148,7 @@ export function Calculator() {
             <div className="grid grid-cols-2 gap-4">
               <div className="relative">
                 <input 
+                  aria-label={`${t("energy")} (kcal)`}
                   type="number" min="0" step="1"
                   value={energyKcal}
                   onChange={(e) => handleKcalChange(e.target.value)}
@@ -157,6 +159,7 @@ export function Calculator() {
               </div>
               <div className="relative">
                 <input 
+                  aria-label={`${t("energy")} (kJ)`}
                   type="number" min="0" step="1"
                   value={energyKj}
                   onChange={(e) => handleKjChange(e.target.value)}
@@ -171,16 +174,18 @@ export function Calculator() {
           {/* Grid for standard nutrients */}
           <div className="grid grid-cols-2 gap-4 pt-2">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-foreground">{t("sugars")} (g)</label>
+              <label htmlFor="input-sugars" className="text-sm font-semibold text-foreground">{t("sugars")} (g)</label>
               <input 
+                id="input-sugars"
                 type="number" min="0" step="0.1" value={sugars} onChange={e => setSugars(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl bg-background border-2 border-border focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                 placeholder="0.0"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-foreground">{t("saturated_fat")} (g)</label>
+              <label htmlFor="input-satfat" className="text-sm font-semibold text-foreground">{t("saturated_fat")} (g)</label>
               <input 
+                id="input-satfat"
                 type="number" min="0" step="0.1" value={satFat} onChange={e => setSatFat(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl bg-background border-2 border-border focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                 placeholder="0.0"
@@ -203,6 +208,7 @@ export function Calculator() {
                 </button>
               </div>
               <input 
+                aria-label={isSodiumMode ? `${t("sodium")} (mg)` : `${t("salt")} (g)`}
                 type="number" min="0" step="0.01" value={saltOrSodium} onChange={e => setSaltOrSodium(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl bg-background border-2 border-border focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                 placeholder="0.0"
@@ -211,8 +217,9 @@ export function Calculator() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-foreground">{t("protein")} (g)</label>
+              <label htmlFor="input-protein" className="text-sm font-semibold text-foreground">{t("protein")} (g)</label>
               <input 
+                id="input-protein"
                 type="number" min="0" step="0.1" value={protein} onChange={e => setProtein(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl bg-background border-2 border-border focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                 placeholder="0.0"
@@ -220,8 +227,9 @@ export function Calculator() {
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-foreground">{t("fiber")} (g)</label>
+              <label htmlFor="input-fiber" className="text-sm font-semibold text-foreground">{t("fiber")} (g)</label>
               <input 
+                id="input-fiber"
                 type="number" min="0" step="0.1" value={fiber} onChange={e => setFiber(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl bg-background border-2 border-border focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                 placeholder="0.0"
@@ -230,8 +238,9 @@ export function Calculator() {
 
             {category === "fats_oils_nuts" && (
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-foreground">{t("total_fat")} (g)</label>
+                <label htmlFor="input-totalfat" className="text-sm font-semibold text-foreground">{t("total_fat")} (g)</label>
                 <input 
+                  id="input-totalfat"
                   type="number" min="0" step="0.1" value={totalFat} onChange={e => setTotalFat(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl bg-background border-2 border-border focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                   placeholder="0.0"
@@ -288,9 +297,10 @@ export function Calculator() {
           <div className="pt-6 flex gap-4">
             <button 
               onClick={clearForm}
+              aria-label="Reset form"
               className="px-4 py-3 rounded-xl font-semibold text-muted-foreground bg-secondary hover:bg-secondary/80 hover:text-foreground transition-colors flex items-center gap-2 no-default-active-elevate active:scale-95"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="w-4 h-4" aria-hidden="true" />
             </button>
             <button 
               onClick={runCalculation}

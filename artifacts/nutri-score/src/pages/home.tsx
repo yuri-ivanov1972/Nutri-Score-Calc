@@ -19,6 +19,7 @@ export default function Home() {
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value as Language)}
+            aria-label="Language"
             className="bg-secondary text-secondary-foreground text-sm font-semibold py-1.5 px-3 rounded-lg border border-border focus:ring-2 focus:ring-primary/20 outline-none cursor-pointer appearance-none hover:bg-secondary/80 transition-colors"
           >
             <option value="en">EN</option>
@@ -48,7 +49,7 @@ export default function Home() {
             world.openfoodfacts.org
           </a>
         </div>
-        <div className="max-w-4xl mx-auto px-4 pb-5 text-xs text-muted-foreground/70 leading-relaxed">
+        <div className="max-w-4xl mx-auto px-4 pb-5 text-xs text-muted-foreground leading-relaxed">
           Calculate Nutri-Score 2.0 (2024) free online. Enter your product's nutrition values —
           energy, sugars, saturated fat, salt, protein, and fibre — and instantly receive a grade
           from A (best quality) to E (worst quality). Supports all categories:
