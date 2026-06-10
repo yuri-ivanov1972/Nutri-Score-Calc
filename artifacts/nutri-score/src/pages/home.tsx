@@ -50,6 +50,12 @@ export default function Home() {
             world.openfoodfacts.org
           </a>
         </div>
+        <div className="max-w-4xl mx-auto px-4 pb-5 text-xs text-muted-foreground/70 leading-relaxed">
+          Calculate Nutri-Score 2.0 (2024) free online. Enter your product's nutrition values —
+          energy, sugars, saturated fat, salt, protein, and fibre — and instantly receive a grade
+          from A (best quality) to E (worst quality). Supports all categories:
+          general foods, beverages, cheese, red meat, and fats &amp; oils.
+        </div>
       </footer>
     </div>
   );
