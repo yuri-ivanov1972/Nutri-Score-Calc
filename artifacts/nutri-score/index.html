@@ -7,7 +7,9 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Non-blocking font load — does not delay FCP -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"></noscript>
 
     <!-- Primary meta -->
     <meta name="description" content="Calculate Nutri-Score 2.0 (2024) free online. Supports all product categories: general foods, beverages, cheese, red meat, and fats. Enter nutrition values and get your grade instantly." />
@@ -26,9 +28,97 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Nutri-Score Calculator – Calculate Nutri-Score 2.0 free" />
     <meta name="twitter:description" content="Calculate Nutri-Score 2.0 (2024) free online. Supports all product categories: general foods, beverages, cheese, red meat, and fats." />
+
+    <style>
+      /* Inline critical styles — matches the app's design tokens exactly */
+      *,::before,::after{box-sizing:border-box;margin:0;padding:0}
+      body{background:#f7f7f6;font-family:Inter,system-ui,sans-serif;color:#1a1a1a;min-height:100vh}
+      #static-shell{display:flex;flex-direction:column;min-height:100vh}
+      /* Header */
+      #ss-header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);border-bottom:1px solid #e5e5e5;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+      #ss-header-inner{max-width:56rem;margin:0 auto;padding:0 1rem;height:96px;display:flex;align-items:center;justify-content:space-between}
+      #ss-logo-wrap{display:flex;align-items:center;gap:12px}
+      #ss-logo{height:72px;width:auto}
+      #ss-title{font-size:1.25rem;font-weight:700;letter-spacing:-.02em;color:#1a1a1a}
+      #ss-lang{background:#f0f0ef;color:#1a1a1a;font-size:.875rem;font-weight:600;padding:6px 12px;border-radius:8px;border:1px solid #e5e5e5}
+      /* Main */
+      #ss-main{flex:1;padding:2rem 1rem 3rem}
+      #ss-card{max-width:56rem;margin:0 auto;background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 1px 4px rgba(0,0,0,.08);border:1px solid #ebebeb}
+      .ss-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+      .ss-label{font-size:.9rem;font-weight:600;color:#1a1a1a}
+      .ss-hint{font-size:.8rem;color:#888}
+      .ss-select{width:100%;background:#f5f5f4;border:1px solid #e5e5e5;border-radius:10px;padding:12px 14px;font-size:.95rem;color:#1a1a1a;margin-bottom:1.25rem}
+      .ss-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.25rem}
+      .ss-field-full{margin-bottom:1.25rem}
+      .ss-field-label{font-size:.85rem;font-weight:500;color:#444;margin-bottom:6px;display:block}
+      .ss-input{width:100%;background:#f5f5f4;border:1px solid #e5e5e5;border-radius:10px;padding:11px 14px;font-size:.95rem;color:#888}
+      .ss-divider{border:none;border-top:1px solid #ebebeb;margin:1.25rem 0}
+      .ss-btn{width:100%;background:hsl(26,100%,50%);color:#fff;border:none;border-radius:12px;padding:14px;font-size:1rem;font-weight:700;cursor:default;margin-top:.5rem}
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Static shell — visible immediately, replaced by React on load -->
+      <div id="static-shell">
+        <header id="ss-header">
+          <div id="ss-header-inner">
+            <div id="ss-logo-wrap">
+              <img id="ss-logo" src="/logo.png" alt="Nutri-Score" />
+              <h1 id="ss-title">Calculator</h1>
+            </div>
+            <div id="ss-lang">EN</div>
+          </div>
+        </header>
+
+        <main id="ss-main">
+          <div id="ss-card">
+            <div class="ss-row">
+              <span class="ss-label">Product Category</span>
+              <span class="ss-hint">per 100g / 100ml</span>
+            </div>
+            <div class="ss-select">General (snacks, meals, bread)</div>
+
+            <div class="ss-field-full">
+              <span class="ss-field-label">⚡ Energy</span>
+              <div class="ss-field-grid">
+                <div class="ss-input">0 kcal</div>
+                <div class="ss-input">0 kJ</div>
+              </div>
+            </div>
+
+            <div class="ss-field-grid">
+              <div>
+                <span class="ss-field-label">Sugars (g)</span>
+                <div class="ss-input">0.0</div>
+              </div>
+              <div>
+                <span class="ss-field-label">Saturated Fat (g)</span>
+                <div class="ss-input">0.0</div>
+              </div>
+            </div>
+
+            <div class="ss-field-grid" style="margin-top:.75rem">
+              <div>
+                <span class="ss-field-label">Salt (g)</span>
+                <div class="ss-input">0.0</div>
+              </div>
+              <div>
+                <span class="ss-field-label">Protein (g)</span>
+                <div class="ss-input">0.0</div>
+              </div>
+            </div>
+
+            <div class="ss-field-full" style="margin-top:.75rem">
+              <span class="ss-field-label">Dietary Fiber (g)</span>
+              <div class="ss-input">0.0</div>
+            </div>
+
+            <hr class="ss-divider" />
+            <div class="ss-btn">Calculate Score</div>
+          </div>
+        </main>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
