@@ -187,6 +187,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     document.title = translations[language].app_title;
+    document.documentElement.lang = language;
   }, [language]);
 
   const t = (key: string) => {

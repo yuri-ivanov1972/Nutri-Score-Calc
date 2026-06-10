@@ -13,9 +13,9 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-4 h-24 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img src={logo} alt="Nutri-Score" className="h-[72px] w-auto" />
-            <span className="font-display font-bold text-xl text-foreground tracking-tight leading-tight">
+            <h1 className="font-display font-bold text-xl text-foreground tracking-tight leading-tight m-0">
               {t("calculator")}
-            </span>
+            </h1>
           </div>
 
           <select
