@@ -1,8 +1,6 @@
 import React from "react";
 import { useI18n, Language } from "@/lib/i18n";
 import { Calculator } from "@/components/calculator";
-import logo from "@assets/RVB_neutre_1774807383388.png";
-
 export default function Home() {
   const { language, setLanguage, t } = useI18n();
 
@@ -12,7 +10,7 @@ export default function Home() {
       <header className="sticky top-0 z-50 bg-card/90 backdrop-blur-md border-b border-border shadow-sm">
         <div className="max-w-4xl mx-auto px-4 h-24 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src={logo} alt="Nutri-Score" className="h-[72px] w-auto" />
+            <img src="/logo.png" alt="Nutri-Score" className="h-[72px] w-auto" />
             <h1 className="font-display font-bold text-xl text-foreground tracking-tight leading-tight m-0">
               {t("calculator")}
             </h1>
