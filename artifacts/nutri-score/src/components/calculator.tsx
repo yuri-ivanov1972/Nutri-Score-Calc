@@ -276,19 +276,19 @@ export function Calculator() {
           {category === "beverage" && (
             <div className="pt-2">
               <label className="flex items-center gap-3 cursor-pointer group">
+                <input 
+                  type="checkbox" 
+                  className="peer sr-only" 
+                  checked={hasSweeteners} 
+                  onChange={(e) => setHasSweeteners(e.target.checked)} 
+                />
                 <div className={cn(
-                  "w-6 h-6 rounded border-2 flex items-center justify-center transition-colors",
+                  "w-6 h-6 rounded border-2 flex items-center justify-center transition-colors peer-focus-visible:ring-4 peer-focus-visible:ring-primary/30 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background",
                   hasSweeteners ? "bg-primary border-primary" : "border-border bg-background group-hover:border-primary/50"
                 )}>
                   {hasSweeteners && <Check className="w-4 h-4 text-white" />}
                 </div>
                 <span className="text-sm font-medium text-foreground select-none">{t("contains_sweeteners")}</span>
-                <input 
-                  type="checkbox" 
-                  className="hidden" 
-                  checked={hasSweeteners} 
-                  onChange={(e) => setHasSweeteners(e.target.checked)} 
-                />
               </label>
             </div>
           )}
