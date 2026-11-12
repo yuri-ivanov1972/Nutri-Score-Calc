@@ -26,6 +26,7 @@ export interface NutriscoreComponents {
   sweetener_pts: number;
   total_negative: number;
   protein_pts: number;
+  effective_protein_pts: number;
   fiber_pts: number;
   fvl_pts: number;
   total_positive: number;
@@ -72,6 +73,29 @@ function pts(value: number, thresholds: number[]): number {
   return thresholds.length;
 }
 
+// Compare the input decimals exactly, including scientific notation. Division
+// (and even binary floating-point multiplication) can round a boundary down.
+function decimalFraction(value: number): [bigint, bigint] {
+  const [mantissa, exponent = "0"] = String(value).toLowerCase().split("e");
+  const decimals = mantissa.split(".")[1]?.length ?? 0;
+  const scale = decimals - Number(exponent);
+  const coefficient = BigInt(mantissa.replace(".", ""));
+  return scale >= 0
+    ? [coefficient, 10n ** BigInt(scale)]
+    : [coefficient * 10n ** BigInt(-scale), 1n];
+}
+
+function fatRatioPoints(saturated: number, total?: number): number {
+  if (!total || total <= 0) return 0;
+  const [satNumerator, satDenominator] = decimalFraction(saturated);
+  const [fatNumerator, fatDenominator] = decimalFraction(total);
+  // Table 7 uses strict upper bounds, unlike the other nutrient tables.
+  return T_SATFAT_RATIO.filter(threshold =>
+    satNumerator * 100n * fatDenominator >=
+    BigInt(threshold) * fatNumerator * satDenominator
+  ).length;
+}
+
 const GRADE_COLOR_MAP: Record<string, { color: string; hex: string }> = {
   A: { color: "dark-green", hex: "#1E7E34" },
   B: { color: "light-green", hex: "#80C41C" },
@@ -102,6 +126,7 @@ export function calculate(input: NutriscoreInput): NutriscoreResult {
     sweetener_pts: 0,
     total_negative: 0,
     protein_pts: 0,
+    effective_protein_pts: 0,
     fiber_pts: 0,
     fvl_pts: 0,
     total_positive: 0,
@@ -121,9 +146,7 @@ export function calculate(input: NutriscoreInput): NutriscoreResult {
   } else if (category === "fats_oils_nuts") {
     const energyFromSat = saturated_fat_g * 37;
     c.energy_pts = pts(energyFromSat, T_SATFAT_FAT_ENERGY);
-    const ratio =
-      total_fat_g && total_fat_g > 0 ? (saturated_fat_g / total_fat_g) * 100 : 0;
-    c.saturated_fat_pts = pts(ratio, T_SATFAT_RATIO);
+    c.saturated_fat_pts = fatRatioPoints(saturated_fat_g, total_fat_g);
     c.sugars_pts = pts(sugars_g, T_SUGARS_GEN);
     c.salt_pts = pts(salt_g, T_SALT_GEN);
     c.total_negative = c.energy_pts + c.sugars_pts + c.saturated_fat_pts + c.salt_pts;
@@ -160,15 +183,21 @@ export function calculate(input: NutriscoreInput): NutriscoreResult {
     c.fvl_pts = fvlRaw === 3 ? 5 : fvlRaw;
   }
 
-  // --- Protein blocking rule (general and red_meat only) ---
+  // --- Category-specific protein blocking rules ---
   let score: number;
   if (category === "beverage") {
     // Special: water / plain drinks automatic A
     if (energy_kj === 0 && sugars_g === 0 && !has_sweeteners) {
+      c.effective_protein_pts = c.protein_pts;
       c.total_positive = c.protein_pts + c.fiber_pts + c.fvl_pts;
       return { grade: "A", score: 0, category, components: c, has_sweeteners, fvl_percent, ...GRADE_COLOR_MAP["A"] };
     }
     c.total_positive = c.protein_pts + c.fiber_pts + c.fvl_pts;
+    score = c.total_negative - c.total_positive;
+  } else if (category === "fats_oils_nuts") {
+    c.protein_blocked = c.total_negative >= 7;
+    if (c.protein_blocked) c.protein_status = "blocked (N≥7, regardless of FVL)";
+    c.total_positive = c.fiber_pts + c.fvl_pts + (c.protein_blocked ? 0 : c.protein_pts);
     score = c.total_negative - c.total_positive;
   } else if (category === "general" || category === "red_meat") {
     if (c.total_negative >= 11 && c.fvl_pts < 5) {
@@ -183,6 +212,7 @@ export function calculate(input: NutriscoreInput): NutriscoreResult {
     c.total_positive = c.protein_pts + c.fiber_pts + c.fvl_pts;
     score = c.total_negative - c.total_positive;
   }
+  c.effective_protein_pts = c.protein_blocked ? 0 : c.protein_pts;
 
   // --- Grade thresholds ---
   let grade: "A" | "B" | "C" | "D" | "E";
@@ -198,7 +228,7 @@ export function calculate(input: NutriscoreInput): NutriscoreResult {
     else if (score <= 18) grade = "D";
     else grade = "E";
   } else {
-    if (score <= -1) grade = "A";
+    if (category === "general" ? score < 1 : score <= -1) grade = "A";
     else if (score <= 2) grade = "B";
     else if (score <= 10) grade = "C";
     else if (score <= 18) grade = "D";

@@ -24,6 +24,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from typing import Literal, Optional
+from fractions import Fraction
 
 # ---------------------------------------------------------------------------
 # Types
@@ -60,6 +61,7 @@ class NutriscoreComponents:
     total_negative: int = 0
 
     protein_pts: int = 0
+    effective_protein_pts: int = 0
     fiber_pts: int = 0
     fvl_pts: int = 0
     total_positive: int = 0
@@ -137,6 +139,16 @@ def _pts(value: float, thresholds: list) -> int:
     return len(thresholds)
 
 
+def _fat_ratio_points(saturated: float, total: Optional[float]) -> int:
+    """Table 7 strict bounds; compare input decimals without division rounding."""
+    if not total or total <= 0:
+        return 0
+    return sum(
+        Fraction(str(saturated)) * 100 >= threshold * Fraction(str(total))
+        for threshold in T_SATFAT_RATIO
+    )
+
+
 # ---------------------------------------------------------------------------
 # Main calculation
 # ---------------------------------------------------------------------------
@@ -175,9 +187,7 @@ def calculate(inp: NutriscoreInput) -> NutriscoreResult:
         energy_from_sat    = inp.saturated_fat_g * 37
         c.energy_pts       = _pts(energy_from_sat, T_SATFAT_FAT_ENERGY)
         # Saturated-fat component = saturated/total fat ratio (%)
-        ratio = (inp.saturated_fat_g / inp.total_fat_g * 100
-                 if inp.total_fat_g and inp.total_fat_g > 0 else 0.0)
-        c.saturated_fat_pts = _pts(ratio, T_SATFAT_RATIO)
+        c.saturated_fat_pts = _fat_ratio_points(inp.saturated_fat_g, inp.total_fat_g)
         c.sugars_pts        = _pts(inp.sugars_g,  T_SUGARS_GEN)
         c.salt_pts          = _pts(inp.salt_g,    T_SALT_GEN)
         c.total_negative    = (c.energy_pts + c.sugars_pts
@@ -226,11 +236,12 @@ def calculate(inp: NutriscoreInput) -> NutriscoreResult:
         c.fvl_pts   = 5 if fvl_raw == 3 else fvl_raw
 
     # -----------------------------------------------------------------------
-    # Final score  (protein blocking rule applies to general and red_meat)
+    # Final score (category-specific protein blocking)
     # -----------------------------------------------------------------------
     if cat == "beverage":
         # Water / plain unsweetened drinks → automatic A
         if inp.energy_kj == 0 and inp.sugars_g == 0 and not inp.has_sweeteners:
+            c.effective_protein_pts = c.protein_pts
             c.total_positive = c.protein_pts + c.fiber_pts + c.fvl_pts
             color, hex_ = _GRADE_COLORS["A"]
             return NutriscoreResult(
@@ -241,6 +252,13 @@ def calculate(inp: NutriscoreInput) -> NutriscoreResult:
                 color=color, hex=hex_,
             )
         c.total_positive = c.protein_pts + c.fiber_pts + c.fvl_pts
+        score = c.total_negative - c.total_positive
+
+    elif cat == "fats_oils_nuts":
+        c.protein_blocked = c.total_negative >= 7
+        if c.protein_blocked:
+            c.protein_status = "blocked (N≥7, regardless of FVL)"
+        c.total_positive = c.fiber_pts + c.fvl_pts + (0 if c.protein_blocked else c.protein_pts)
         score = c.total_negative - c.total_positive
 
     elif cat in ("general", "red_meat"):
@@ -258,9 +276,11 @@ def calculate(inp: NutriscoreInput) -> NutriscoreResult:
         score = c.total_negative - c.total_positive
 
     else:
-        # cheese / fats_oils_nuts: no protein blocking
+        # Cheese: no protein blocking
         c.total_positive = c.protein_pts + c.fiber_pts + c.fvl_pts
         score = c.total_negative - c.total_positive
+
+    c.effective_protein_pts = 0 if c.protein_blocked else c.protein_pts
 
     # -----------------------------------------------------------------------
     # Grade thresholds
@@ -280,8 +300,8 @@ def calculate(inp: NutriscoreInput) -> NutriscoreResult:
         else:             grade = "E"
 
     else:
-        # general / cheese / red_meat share the same thresholds
-        if   score <= -1: grade = "A"
+        # The requested zero-score correction applies only to general foods.
+        if   (score < 1 if cat == "general" else score <= -1): grade = "A"
         elif score <= 2:  grade = "B"
         elif score <= 10: grade = "C"
         elif score <= 18: grade = "D"
@@ -340,11 +360,11 @@ def _print_result(label: str, result: NutriscoreResult) -> None:
     if c.sweetener_pts:
         print(f"    Sweeteners    : {c.sweetener_pts} pts")
     print(f"  --- Positive points ({c.total_positive} total) ---")
-    print(f"    Protein  : {c.protein_pts} pts  [{c.protein_status}]")
+    print(f"    Protein  : {c.effective_protein_pts} effective pts (raw {c.protein_pts})  [{c.protein_status}]")
     print(f"    Fiber    : {c.fiber_pts} pts")
     print(f"    FVL      : {c.fvl_pts} pts  (FVL {result.fvl_percent}%)")
     if c.protein_blocked:
-        print(f"  ⚠  Protein blocked (N≥11 and FVL<5 pts)")
+        print(f"  Protein {c.protein_status}")
 
 
 # ---------------------------------------------------------------------------

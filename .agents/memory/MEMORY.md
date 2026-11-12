@@ -1,0 +1,1 @@
+- [Nutri-Score scope safeguards](nutriscore-scope.md) — explicit categories and manual percentages; historical-score recalculation and other FAQ discrepancies need separate approval.

@@ -254,10 +254,16 @@ export function Calculator() {
             <label className="text-sm font-semibold text-foreground flex items-center gap-2">
               <Apple className="w-4 h-4 text-green-500" /> {t("fvl")}
             </label>
+            {category === "fats_oils_nuts" && (
+              <p className="text-xs text-muted-foreground" id="fats-fvl-guidance">
+                {t("fats_fvl_guidance")}
+              </p>
+            )}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {FVL_OPTIONS.map((opt, i) => (
                 <button
                   key={i}
+                  aria-describedby={category === "fats_oils_nuts" ? "fats-fvl-guidance" : undefined}
                   onClick={() => setFvlIndex(i)}
                   className={cn(
                     "py-2 px-1 text-xs sm:text-sm font-medium rounded-lg transition-all border-2",
@@ -365,14 +371,14 @@ export function Calculator() {
                     <ul className="space-y-1 text-sm text-muted-foreground">
                       <li className="flex justify-between">
                         <span>{t("protein")}</span> 
-                        <span className={result.components.protein_blocked ? "line-through opacity-50" : ""}>{result.components.protein_pts}</span>
+                        <span>{result.components.effective_protein_pts}</span>
                       </li>
                       <li className="flex justify-between"><span>{t("fiber")}</span> <span>{result.components.fiber_pts}</span></li>
                       <li className="flex justify-between"><span>{t("fvl")}</span> <span>{result.components.fvl_pts}</span></li>
                     </ul>
                     {result.components.protein_blocked && (
                       <p className="text-xs text-orange-600 dark:text-orange-400 mt-2 bg-orange-500/10 p-2 rounded-md font-medium border border-orange-500/20">
-                        {t("protein_blocked")}
+                        {t(result.category === "fats_oils_nuts" ? "protein_blocked_fats" : "protein_blocked")}
                       </p>
                     )}
                   </div>
