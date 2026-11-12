@@ -44,5 +44,5 @@ test("all five translations include fats-specific explanation and oil guidance",
   assert.match(ui, /result\.category === "fats_oils_nuts" \? "protein_blocked_fats" : "protein_blocked"/);
   assert.match(ui, /result\.components\.effective_protein_pts/);
   assert.match(ui, /category === "fats_oils_nuts" && \([\s\S]*?t\("fats_fvl_guidance"\)/);
-  assert.match(ui, /const fvlValues = \[0, 40, 60, 80\]/, "Do not change manual FVL choices in this task");
+  assert.match(ui, /fvl_percent: fvlValue/, "Submit the exact manually entered FVL percentage");
 });

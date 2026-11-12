@@ -31,7 +31,8 @@ export function Calculator() {
   // Toggles & Modes
   const [isSodiumMode, setIsSodiumMode] = useState(false);
   const [saltOrSodium, setSaltOrSodium] = useState<string>("");
-  const [fvlIndex, setFvlIndex] = useState<number>(0);
+  const [fvlPercent, setFvlPercent] = useState("0");
+  const [fvlError, setFvlError] = useState(false);
   const [hasSweeteners, setHasSweeteners] = useState(false);
 
   // Result
@@ -71,12 +72,20 @@ export function Calculator() {
     setFiber("");
     setTotalFat("");
     setSaltOrSodium("");
-    setFvlIndex(0);
+    setFvlPercent("0");
+    setFvlError(false);
     setHasSweeteners(false);
     setResult(null);
   };
 
   const runCalculation = () => {
+    const fvlValue = Number(fvlPercent);
+    if (fvlPercent.trim() === "" || !Number.isFinite(fvlValue) || fvlValue < 0 || fvlValue > 100) {
+      setFvlError(true);
+      setResult(null);
+      return;
+    }
+    setFvlError(false);
     // Validate required fields
     if (!energyKj || !sugars || !satFat || !protein || !saltOrSodium || (category === "fats_oils_nuts" && !totalFat)) {
       alert(t("fill_required"));
@@ -87,8 +96,6 @@ export function Calculator() {
       ? sodiumMgToSaltG(parseFloat(saltOrSodium)) 
       : parseFloat(saltOrSodium);
 
-    const fvlValues = [0, 40, 60, 80];
-    
     const res = calculate({
       category,
       energy_kj: parseFloat(energyKj),
@@ -98,7 +105,7 @@ export function Calculator() {
       protein_g: parseFloat(protein),
       fiber_g: parseFloat(fiber) || 0,
       total_fat_g: parseFloat(totalFat) || 0,
-      fvl_percent: fvlValues[fvlIndex],
+      fvl_percent: fvlValue,
       has_sweeteners: hasSweeteners
     });
 
@@ -107,13 +114,6 @@ export function Calculator() {
       resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 100);
   };
-
-  const FVL_OPTIONS = [
-    { label: t("fvl_0"), val: 0 },
-    { label: t("fvl_40"), val: 1 },
-    { label: t("fvl_60"), val: 2 },
-    { label: t("fvl_80"), val: 3 },
-  ];
 
   return (
     <div className="w-full max-w-lg mx-auto pb-24">
@@ -251,31 +251,36 @@ export function Calculator() {
 
           {/* FVL */}
           <div className="space-y-3 pt-4 border-t border-border">
-            <label className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <Apple className="w-4 h-4 text-green-500" /> {t("fvl")}
+            <label htmlFor="fvl-percent" className="text-sm font-semibold text-foreground flex items-center gap-2">
+              <Apple className="w-4 h-4 text-green-500" /> {t("fvl")} (%)
             </label>
+            <input
+              id="fvl-percent"
+              type="number"
+              inputMode="decimal"
+              min="0"
+              max="100"
+              step="any"
+              required
+              value={fvlPercent}
+              onChange={(e) => {
+                setFvlPercent(e.target.value);
+                setFvlError(false);
+                setResult(null);
+              }}
+              aria-invalid={fvlError}
+              aria-describedby={cn("fvl-guidance", category === "fats_oils_nuts" && "fats-fvl-guidance", fvlError && "fvl-error")}
+              className="w-full px-4 py-3 rounded-xl bg-background border-2 border-border text-foreground focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+            />
+            <p className="text-xs text-muted-foreground" id="fvl-guidance">
+              {t("fvl_guidance")}
+            </p>
+            {fvlError && <p className="text-sm text-destructive" id="fvl-error" role="alert">{t("fvl_invalid")}</p>}
             {category === "fats_oils_nuts" && (
               <p className="text-xs text-muted-foreground" id="fats-fvl-guidance">
                 {t("fats_fvl_guidance")}
               </p>
             )}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {FVL_OPTIONS.map((opt, i) => (
-                <button
-                  key={i}
-                  aria-describedby={category === "fats_oils_nuts" ? "fats-fvl-guidance" : undefined}
-                  onClick={() => setFvlIndex(i)}
-                  className={cn(
-                    "py-2 px-1 text-xs sm:text-sm font-medium rounded-lg transition-all border-2",
-                    fvlIndex === i 
-                      ? "bg-primary/10 border-primary text-primary shadow-sm" 
-                      : "bg-background border-border text-muted-foreground hover:border-primary/40 hover:bg-background/80"
-                  )}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
           </div>
 
           {/* Sweeteners (Beverages only) */}

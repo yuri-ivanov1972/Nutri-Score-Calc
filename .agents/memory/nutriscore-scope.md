@@ -9,6 +9,12 @@ Use the product's explicit Nutri-Score category, never category-name/code heuris
 
 **How to apply:** Preserve category identity and manual nutrition/FVL values whenever correcting scoring rules.
 
+Use exact percentage entry for FVL rather than representative band buttons.
+
+**Why:** The user explicitly chose exact percentage entry to resolve misleading band labels while retaining the existing 0% default.
+
+**How to apply:** Keep manual percentages unchanged across category switches; do not round or substitute band representatives.
+
 Existing saved scores require a separately approved recalculation; an algorithm correction does not authorize bulk recalculation or production-data changes.
 
 **Why:** The user explicitly separated calculator fixes from historical-data changes.
